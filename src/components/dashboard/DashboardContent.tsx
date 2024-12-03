@@ -1,4 +1,3 @@
-import React from 'react';
 import { StatCard } from './StatCard';
 import { 
   Thermometer,
@@ -6,8 +5,43 @@ import {
   Sun,
   Wind
 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { 
+  getControlStates1, 
+  getControlStates2, 
+  getSensorData,
+  getSensorData2, 
+  userLogin 
+} from '../../api/api';
 
 export function DashboardContent() {
+  useEffect(() => {
+    const testApiEndpoints = async () => {
+      try {
+        // Fetch control states
+        const control1 = await getControlStates1();
+        console.log('Control State 1:', control1.data);
+
+        const control2 = await getControlStates2();
+        console.log('Control State 2:', control2.data);
+
+        // Fetch sensor data
+        const sensor = await getSensorData2();
+        console.log('Sensor Data:', sensor.data);
+
+        const sensor2 = await getSensorData();
+        console.log('Sensor Data2:', sensor2.data);
+
+        // Test user login (replace with valid credentials for testing)
+        const login = await userLogin({ username: 'testuser', password: 'testpassword' });
+        console.log('User Login Response:', login.data);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
+    };
+
+    testApiEndpoints();
+  }, []);
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Greenhouse Overview</h2>
@@ -33,7 +67,7 @@ export function DashboardContent() {
           icon={<Sun className="w-6 h-6" />}
         />
         <StatCard
-          title="Air Flow"
+          title="Soil Moisture"
           value="0.5 m/s"
           icon={<Wind className="w-6 h-6" />}
         />
