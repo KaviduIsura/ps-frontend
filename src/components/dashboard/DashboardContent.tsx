@@ -5,42 +5,38 @@ import {
   Sun,
   Wind
 } from 'lucide-react';
-import React, { useEffect } from 'react';
-import { 
-  getControlStates1, 
-  getControlStates2, 
-  getSensorData,
-  getSensorData2, 
-  userLogin 
-} from '../../api/api';
+import { useEffect,useState } from 'react';
+import { getSensorData } from '../../api/api';
 
 export function DashboardContent() {
+
+  const [temperature, setTemperature] = useState(null);
+  const [humidity, setHumidity] = useState(null);
+  const [lightIntensity, setLightIntensity] = useState(null);
+
   useEffect(() => {
-    const testApiEndpoints = async () => {
+    const fetchSensorData = async () => {
       try {
-        // Fetch control states
-        const control1 = await getControlStates1();
-        console.log('Control State 1:', control1.data);
-
-        const control2 = await getControlStates2();
-        console.log('Control State 2:', control2.data);
-
         // Fetch sensor data
-        const sensor = await getSensorData2();
-        console.log('Sensor Data:', sensor.data);
+        const sensor = await getSensorData();
+        // console.log('Sensor Data:', sensor.data);
 
-        const sensor2 = await getSensorData();
-        console.log('Sensor Data2:', sensor2.data);
+        const latestData = sensor.data.list[0]; 
+        setTemperature(latestData.temperature);
+        setHumidity(latestData.humidity);
+        setLightIntensity(latestData.lightIntensity);
+        // console.log(latestData);
+        
 
-        // Test user login (replace with valid credentials for testing)
-        const login = await userLogin({ username: 'testuser', password: 'testpassword' });
-        console.log('User Login Response:', login.data);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Sensor Data wla mokk hri awlk:', err);
       }
     };
 
-    testApiEndpoints();
+    fetchSensorData();
+    const interval = setInterval(fetchSensorData, 30000);
+
+    return () => clearInterval(interval);
   }, []);
   return (
     <div className="p-6">
@@ -49,21 +45,21 @@ export function DashboardContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Temperature"
-          value="24°C"
+          value={ temperature !== null ? `${temperature}°C` : "Loading..."}
           icon={<Thermometer className="w-6 h-6" />}
           trend="up"
           trendValue="2°C from yesterday"
         />
         <StatCard
           title="Humidity"
-          value="65%"
+          value={ humidity !== null ? `${humidity}%` : "Loading..."}
           icon={<Droplets className="w-6 h-6" />}
           trend="down"
           trendValue="5% from yesterday"
         />
         <StatCard
           title="Light Intensity"
-          value="850 lux"
+          value={ lightIntensity !== null ? `${lightIntensity} lux` : "Loading..."}
           icon={<Sun className="w-6 h-6" />}
         />
         <StatCard
