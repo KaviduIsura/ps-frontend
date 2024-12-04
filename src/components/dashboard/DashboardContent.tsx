@@ -61,8 +61,8 @@ export function DashboardContent() {
     return () => clearInterval(interval);
   }, []);
 
-  const statusText = (isActive) => (isActive ? "Active" : "Standby");
-  const statusBgColor = (isActive) => (isActive ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800");
+  const statusText = (isActive: boolean) => (isActive ? "Active" : "Standby");
+  const statusBgColor = (isActive: boolean) => (isActive ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800");
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Greenhouse Overview</h2>
