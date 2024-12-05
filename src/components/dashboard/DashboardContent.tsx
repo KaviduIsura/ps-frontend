@@ -25,7 +25,7 @@ export function DashboardContent() {
       try {
         // Fetch sensor data
         const sensor = await getSensorData();
-        // console.log('Sensor Data:', sensor.data);
+        console.log('Sensor Data:', sensor.data);
 
         const latestData = sensor.data.list[0]; 
         setTemperature(latestData.temperature);
@@ -44,7 +44,7 @@ export function DashboardContent() {
         // Fetch sensor data
         const controlStates = await getControlStates1();
         setSystemStatus(controlStates.data);
-        console.log('Sensor status:', controlStates.data);
+        // console.log('Sensor status:', controlStates.data);
         
       } catch (err) {
         console.error('Sensor Status wla mokk hri awlk:', err);

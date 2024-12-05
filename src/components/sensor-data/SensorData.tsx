@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SensorChart } from './SensorChart';
-import { generateMockData } from './mockData';
+import { getSensorData } from '../../api/api'; // Import the API function
 
 export function SensorData() {
+  const [sensorData, setSensorData] = useState<any[]>([]); // State to store fetched sensor data
+  const [loading, setLoading] = useState<boolean>(true);  // State to track loading status
+
+  useEffect(() => {
+    // Fetch data from the API when the component mounts
+    const fetchData = async () => {
+      try {
+        const response = await getSensorData();  // API call to fetch sensor data
+        setSensorData(response.data.list);  // Set the fetched data to state
+      } catch (error) {
+        console.error('Error fetching sensor data:', error);
+      } finally {
+        setLoading(false);  // Set loading to false once data is fetched or error occurs
+      }
+    };
+
+    fetchData();  // Call the function to fetch data
+  }, []);  // Empty dependency array to run the effect only once when component mounts
+
+  // Download function remains the same as before
   const handleDownload = (sensorType: string, data: any[]) => {
     const csvContent = [
       ['Timestamp', 'Value'],
@@ -20,45 +40,51 @@ export function SensorData() {
     window.URL.revokeObjectURL(url);
   };
 
-  const temperatureData = generateMockData(20, 26);
-  const humidityData = generateMockData(60, 70);
-  const lightData = generateMockData(800, 900);
-  const airFlowData = generateMockData(0.3, 0.7);
-
+  // Extract the necessary data for each sensor from the API response
+  const temperatureData = sensorData.map((entry) => ({
+    timestamp: entry.timestamp,
+    value: entry.temperature,
+  }));
+  const humidityData = sensorData.map((entry) => ({
+    timestamp: entry.timestamp,
+    value: entry.humidity,
+  }));
+  const lightData = sensorData.map((entry) => ({
+    timestamp: entry.timestamp,
+    value: entry.lightIntensity,
+  }));
+  
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Sensor Data</h2>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SensorChart
-          title="Temperature"
-          data={temperatureData}
-          unit="°C"
-          color="#ef4444"
-          onDownload={() => handleDownload('temperature', temperatureData)}
-        />
-        <SensorChart
-          title="Humidity"
-          data={humidityData}
-          unit="%"
-          color="#3b82f6"
-          onDownload={() => handleDownload('humidity', humidityData)}
-        />
-        <SensorChart
-          title="Light Intensity"
-          data={lightData}
-          unit=" lux"
-          color="#f59e0b"
-          onDownload={() => handleDownload('light', lightData)}
-        />
-        <SensorChart
-          title="Air Flow"
-          data={airFlowData}
-          unit=" m/s"
-          color="#10b981"
-          onDownload={() => handleDownload('airflow', airFlowData)}
-        />
-      </div>
+      {loading ? (
+        <div>Loading...</div>  // Show a loading indicator while data is being fetched
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SensorChart
+            title="Temperature"
+            data={temperatureData}
+            unit="°C"
+            color="#ef4444"
+            onDownload={() => handleDownload('temperature', temperatureData)}
+          />
+          <SensorChart
+            title="Humidity"
+            data={humidityData}
+            unit="%"
+            color="#3b82f6"
+            onDownload={() => handleDownload('humidity', humidityData)}
+          />
+          <SensorChart
+            title="Light Intensity"
+            data={lightData}
+            unit=" lux"
+            color="#f59e0b"
+            onDownload={() => handleDownload('light', lightData)}
+          />
+        </div>
+      )}
     </div>
   );
 }
