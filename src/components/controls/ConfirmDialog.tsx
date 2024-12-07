@@ -12,17 +12,10 @@ export function ConfirmDialog({ isOpen, onClose, onConfirm, changes, type }: Con
   if (!isOpen) return null;
 
   const formatChanges = () => {
-    const parts = [];
-    if (changes.enabled !== undefined) {
-      parts.push(`Power: ${changes.enabled ? 'On' : 'Off'}`);
+    if (changes?.enabled !== undefined) {
+      return `Power: ${changes.enabled ? 'On' : 'Off'}`;
     }
-    if (changes.value !== undefined) {
-      parts.push(`Value: ${changes.value}`);
-    }
-    if (changes.duration !== undefined) {
-      parts.push(`Duration: ${changes.duration} minutes`);
-    }
-    return parts.join(', ');
+    return 'No changes specified.';
   };
 
   return (
