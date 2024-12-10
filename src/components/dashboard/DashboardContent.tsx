@@ -7,7 +7,7 @@ export function DashboardContent() {
   const [temperature, setTemperature] = useState(null);
   const [humidity, setHumidity] = useState(null);
   const [lightIntensity, setLightIntensity] = useState(null);
-  // for the senssor status
+  // for the sensor status
   const [systemStatus, setSystemStatus] = useState({
     fan1: false,
     fan2: false,
@@ -42,7 +42,7 @@ export function DashboardContent() {
         setSystemStatus(controlStates.data);
         console.log("Sensor status:", controlStates.data);
       } catch (err) {
-        console.error("Sensor Status wla mokk hri awlk:", err);
+        console.error("Sensor Status error:", err);
       }
     };
 
@@ -59,6 +59,7 @@ export function DashboardContent() {
   const statusText = (isActive: boolean) => (isActive ? "Active" : "Standby");
   const statusBgColor = (isActive: boolean) =>
     isActive ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800";
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Greenhouse Overview</h2>
@@ -96,17 +97,7 @@ export function DashboardContent() {
         <h3 className="text-xl font-semibold mb-4">System Status</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between py-2 border-b">
-            <span className="text-gray-600">Ventilation System (Fan 1)</span>
-            <span
-              className={`px-3 py-1 rounded-full text-sm ${statusBgColor(
-                systemStatus.fan1
-              )}`}
-            >
-              {statusText(systemStatus.fan1)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between py-2 border-b">
-            <span className="text-gray-600">Irrigation System (Fan 2)</span>
+            <span className="text-gray-600">Temperature Controller</span>
             <span
               className={`px-3 py-1 rounded-full text-sm ${statusBgColor(
                 systemStatus.fan2
@@ -116,7 +107,17 @@ export function DashboardContent() {
             </span>
           </div>
           <div className="flex items-center justify-between py-2 border-b">
-            <span className="text-gray-600">Lighting System (LED)</span>
+            <span className="text-gray-600">Humidity Controller</span>
+            <span
+              className={`px-3 py-1 rounded-full text-sm ${statusBgColor(
+                systemStatus.fan1
+              )}`}
+            >
+              {statusText(systemStatus.fan1)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between py-2 border-b">
+            <span className="text-gray-600">Lighting Controller</span>
             <span
               className={`px-3 py-1 rounded-full text-sm ${statusBgColor(
                 systemStatus.led

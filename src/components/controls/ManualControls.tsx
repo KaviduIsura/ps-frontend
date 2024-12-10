@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ControlPanel } from "./ControlPanel";
-import { Fan, Lightbulb, Thermometer } from "lucide-react";
+import { Fan, Lightbulb, Thermometer, Droplet } from "lucide-react";
 import { updateControlStates1, getControlStates1 } from "../../api/api";
 
 export function ManualControls() {
@@ -53,6 +53,7 @@ export function ManualControls() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ControlPanel
           title="Temperature Control"
+          description="Maintain the ideal temperature for your environment. Adjust settings to ensure optimal comfort and efficiency."
           icon={<Thermometer className="w-6 h-6" />}
           type="temperature"
           isEnabled={controlStates.temperature}
@@ -60,6 +61,7 @@ export function ManualControls() {
         />
         <ControlPanel
           title="Humidity Control"
+          description="Regulate the humidity levels to create a balanced atmosphere. Ideal for sensitive materials or comfort."
           icon={<Fan className="w-6 h-6" />}
           type="fan"
           isEnabled={controlStates.fan}
@@ -67,10 +69,19 @@ export function ManualControls() {
         />
         <ControlPanel
           title="Lighting Control"
+          description="Customize your lighting preferences. Create the perfect ambiance or ensure proper visibility."
           icon={<Lightbulb className="w-6 h-6" />}
           type="lighting"
           isEnabled={controlStates.lighting}
           onConfirm={handleConfirm}
+        />
+        <ControlPanel
+          title="Irrigation Control"
+          description="Monitor and manage water supply for irrigation. Keep your plants healthy and hydrated. (Coming Soon)"
+          icon={<Droplet className="w-6 h-6" />}
+          type="irrigation"
+          isEnabled={false} // Placeholder as per the requirement
+          onConfirm={() => {}}
         />
       </div>
     </div>

@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Switch } from './Switch';
-import { ConfirmDialog } from './ConfirmDialog';
+import React, { useState, useEffect } from "react";
+import { Switch } from "./Switch";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 interface ControlPanelProps {
   title: string;
+  description: string; // Add this line
   icon: React.ReactNode;
   type: string;
   isEnabled: boolean;
   onConfirm: (type: string, value: any) => void;
 }
 
-export function ControlPanel({ title, icon, type, isEnabled, onConfirm }: ControlPanelProps) {
+export function ControlPanel({
+  title,
+  description,
+  icon,
+  type,
+  isEnabled,
+  onConfirm,
+}: ControlPanelProps) {
   const [localEnabled, setLocalEnabled] = useState(isEnabled);
 
   useEffect(() => {
@@ -39,12 +47,12 @@ export function ControlPanel({ title, icon, type, isEnabled, onConfirm }: Contro
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
 
+      {/* Description rendering */}
+      <p className="text-gray-500 text-sm mb-4">{description}</p>
+
       <div className="flex items-center justify-between">
         <span className="text-gray-600">Power</span>
-        <Switch
-          checked={localEnabled}
-          onChange={handleChange}
-        />
+        <Switch checked={localEnabled} onChange={handleChange} />
       </div>
 
       <ConfirmDialog
