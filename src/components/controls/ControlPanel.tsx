@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch } from './Switch';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -6,11 +6,16 @@ interface ControlPanelProps {
   title: string;
   icon: React.ReactNode;
   type: string;
+  isEnabled: boolean;
   onConfirm: (type: string, value: any) => void;
 }
 
-export function ControlPanel({ title, icon, type, onConfirm }: ControlPanelProps) {
-  const [isEnabled, setIsEnabled] = useState(false);
+export function ControlPanel({ title, icon, type, isEnabled, onConfirm }: ControlPanelProps) {
+  const [localEnabled, setLocalEnabled] = useState(isEnabled);
+
+  useEffect(() => {
+    setLocalEnabled(isEnabled);
+  }, [isEnabled]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingChanges, setPendingChanges] = useState<any>(null);
@@ -23,7 +28,7 @@ export function ControlPanel({ title, icon, type, onConfirm }: ControlPanelProps
 
   const handleConfirm = () => {
     onConfirm(type, pendingChanges);
-    setIsEnabled(pendingChanges.enabled);
+    setLocalEnabled(pendingChanges.enabled);
     setShowConfirm(false);
   };
 
@@ -37,7 +42,7 @@ export function ControlPanel({ title, icon, type, onConfirm }: ControlPanelProps
       <div className="flex items-center justify-between">
         <span className="text-gray-600">Power</span>
         <Switch
-          checked={isEnabled}
+          checked={localEnabled}
           onChange={handleChange}
         />
       </div>

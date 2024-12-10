@@ -1,27 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ControlPanel } from './ControlPanel';
 import { Fan, Lightbulb, Droplet, Thermometer } from 'lucide-react';
-import { updateControlStates1 } from '../../api/api'; 
+import { updateControlStates1, getControlStates1 } from '../../api/api'; 
 
 export function ManualControls() {
+  const [controlStates, setControlStates] = useState({
+    fan: false,
+    lighting: false,
+    irrigation: false,
+    temperature: false,
+  });
+
+  useEffect(() => {
+    // Fetch the current control states
+    getControlStates1()
+      .then(response => {
+        const data = response.data;
+        setControlStates({
+          fan: data.manualFan1,
+          lighting: data.manualLed,
+          irrigation: false, // Update with correct data if available
+          temperature: data.manualFan2, // Update with correct data if available
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching control states:', error);
+      });
+  }, []);
+
   const handleConfirm = (type: string, value: any) => {
     const payload = {
-      fan1: value.enabled,  // Assuming 'enabled' controls the fan1 status
-      fan2: value.enabled,  // Assuming 'enabled' controls the fan2 status
-      led: value.enabled,   // Assuming 'enabled' controls the LED status
-      manual: true,         // Set 'manual' to true, since it's a manual change
-      manualFan1: value.enabled,  // Similarly, control manualFan1
-      manualFan2: value.enabled,  // Similarly, control manualFan2
-      manualLed: value.enabled   // Similarly, control manualLed
+      manual: true,
+      manualFan1: type === 'fan' ? value.enabled : controlStates.fan,
+      manualFan2: type === 'temperature' ? value.enabled : controlStates.temperature,
+      manualLed: type === 'lighting' ? value.enabled : controlStates.lighting,
+      // Add other controls as needed
     };
-    // Call the API to update control states
-  updateControlStates1(payload)
-  .then(response => {
-    console.log(`Successfully updated ${type}:`, response.data);
-  })
-  .catch(error => {
-    console.error('Error updating control state:', error);
-  });
+    updateControlStates1(payload)
+      .then(response => {
+        console.log(`Successfully updated ${type}:`, response.data);
+        setControlStates(prevStates => ({
+          ...prevStates,
+          [type]: value.enabled,
+        }));
+      })
+      .catch(error => {
+        console.error('Error updating control state:', error);
+      });
   };
 
   return (
@@ -32,24 +57,28 @@ export function ManualControls() {
           title="Humidity Control"
           icon={<Fan className="w-6 h-6" />}
           type="fan"
+          isEnabled={controlStates.fan}
           onConfirm={handleConfirm}
         />
         <ControlPanel
           title="Lighting Control"
           icon={<Lightbulb className="w-6 h-6" />}
           type="lighting"
+          isEnabled={controlStates.lighting}
           onConfirm={handleConfirm}
         />
         <ControlPanel
           title="Irrigation Control"
           icon={<Droplet className="w-6 h-6" />}
           type="irrigation"
+          isEnabled={controlStates.irrigation}
           onConfirm={handleConfirm}
         />
         <ControlPanel
           title="Temperature Control"
           icon={<Thermometer className="w-6 h-6" />}
           type="temperature"
+          isEnabled={controlStates.temperature}
           onConfirm={handleConfirm}
         />
       </div>
