@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ControlPanel } from "./ControlPanel";
-import { Fan, Lightbulb, Droplet, Thermometer } from "lucide-react";
-import {
-  updateControlStates1,
-  getControlStates1,
-  resetControlStates1,
-} from "../../api/api";
+import { Fan, Lightbulb, Thermometer } from "lucide-react";
+import { updateControlStates1, getControlStates1 } from "../../api/api";
 
 export function ManualControls() {
   const [controlStates, setControlStates] = useState({
     fan: false,
     lighting: false,
-    irrigation: false,
     temperature: false,
   });
 
@@ -23,8 +18,7 @@ export function ManualControls() {
         setControlStates({
           fan: data.manualFan1,
           lighting: data.manualLed,
-          irrigation: false, // Update with correct data if available
-          temperature: data.manualFan2, // Update with correct data if available
+          temperature: data.manualFan2, // Temperature uses manualFan2
         });
       })
       .catch((error) => {
@@ -39,7 +33,6 @@ export function ManualControls() {
       manualFan2:
         type === "temperature" ? value.enabled : controlStates.temperature,
       manualLed: type === "lighting" ? value.enabled : controlStates.lighting,
-      // Add other controls as needed
     };
     updateControlStates1(payload)
       .then((response) => {
@@ -54,31 +47,17 @@ export function ManualControls() {
       });
   };
 
-  const handleReset = () => {
-    const payload = {
-      resetFan1: true,
-      resetFan2: true,
-      resetLed: true,
-    };
-    resetControlStates1(payload)
-      .then((response) => {
-        console.log("Successfully reset control states:", response.data);
-        setControlStates({
-          fan: false,
-          lighting: false,
-          irrigation: false, // Update with correct data if necessary
-          temperature: false,
-        });
-      })
-      .catch((error) => {
-        console.error("Error resetting control states:", error);
-      });
-  };
-
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-6">Manual Controls</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ControlPanel
+          title="Temperature Control"
+          icon={<Thermometer className="w-6 h-6" />}
+          type="temperature"
+          isEnabled={controlStates.temperature}
+          onConfirm={handleConfirm}
+        />
         <ControlPanel
           title="Humidity Control"
           icon={<Fan className="w-6 h-6" />}
@@ -93,28 +72,6 @@ export function ManualControls() {
           isEnabled={controlStates.lighting}
           onConfirm={handleConfirm}
         />
-        <ControlPanel
-          title="Irrigation Control"
-          icon={<Droplet className="w-6 h-6" />}
-          type="irrigation"
-          isEnabled={controlStates.irrigation}
-          onConfirm={handleConfirm}
-        />
-        <ControlPanel
-          title="Temperature Control"
-          icon={<Thermometer className="w-6 h-6" />}
-          type="temperature"
-          isEnabled={controlStates.temperature}
-          onConfirm={handleConfirm}
-        />
-      </div>
-      <div className="mt-6">
-        <button
-          onClick={handleReset}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Reset Control States
-        </button>
       </div>
     </div>
   );
