@@ -17,17 +17,21 @@ export function DashboardContent() {
   useEffect(() => {
     const fetchSensorData = async () => {
       try {
-        // Fetch sensor data
-        const sensor = await getSensorData();
-        // console.log("Sensor Data:", sensor.data);
+        // Fetch all sensor data
+        const response = await getSensorData();
 
-        const latestData = sensor.data.list[0];
+        // Assuming the data is an array
+        const dataList = response.data.list; // Adjust this path based on your API response structure
+        const latestData = dataList[dataList.length - 1]; // Get the last entry
+
+        // Update the state with the latest sensor data
         setTemperature(latestData.temperature);
         setHumidity(latestData.humidity);
         setLightIntensity(latestData.lightIntensity);
-        // console.log(latestData);
+
+        console.log("Latest Sensor Data:", latestData);
       } catch (err) {
-        console.error("Sensor Data wla mokk hri awlk machn:", err);
+        console.error("Error fetching the latest sensor data:", err);
       }
     };
 
@@ -36,7 +40,7 @@ export function DashboardContent() {
         // Fetch sensor data
         const controlStates = await getControlStates1();
         setSystemStatus(controlStates.data);
-        console.log('Sensor status:', controlStates.data);
+        console.log("Sensor status:", controlStates.data);
       } catch (err) {
         console.error("Sensor Status wla mokk hri awlk:", err);
       }

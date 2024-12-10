@@ -8,11 +8,14 @@ const API = axios.create({ baseURL: "http://localhost:5003/api" });
 // Get control states
 export const getControlStates1 = () => API.get("/control");
 export const updateControlStates1 = (data: any) => API.post("/control", data);
+export const resetControlStates1 = (data: any) =>
+  API.post("/control/reset", data);
 
 export const getControlStates2 = () => API.get("/control2");
 export const updateControlStates2 = (data) => API.post("/control2", data);
 
 export const getSensorData = () => API.get("/sensor");
+export const getLatestSensorData = () => API.get("/sensordata");
 export const saveSensorData = (data) => API.post("/sensor", data);
 
 export const getSensorData2 = () => API.get("/sensor2");
