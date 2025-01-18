@@ -95,7 +95,7 @@ export function DashboardContent() {
       fetchSensorData2();
       fetchSensorStatus();
       fetchSensorStatus2();
-    }, 3000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);

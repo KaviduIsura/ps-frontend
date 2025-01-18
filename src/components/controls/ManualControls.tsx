@@ -1,50 +1,85 @@
 import React, { useState, useEffect } from "react";
 import { ControlPanel } from "./ControlPanel";
 import { Fan, Lightbulb, Thermometer, Droplet } from "lucide-react";
-import { updateControlStates1, getControlStates1 } from "../../api/api";
+import {
+  updateControlStates1,
+  getControlStates1,
+  updateControlStates2,
+  getControlStates2,
+} from "../../api/api";
 
 export function ManualControls() {
   const [controlStates, setControlStates] = useState({
     fan: false,
     lighting: false,
     temperature: false,
+    irrigation: false,
   });
 
   useEffect(() => {
-    // Fetch the current control states
+    // Fetch general control states
     getControlStates1()
       .then((response) => {
         const data = response.data;
-        setControlStates({
+        setControlStates((prevStates) => ({
+          ...prevStates,
           fan: data.manualFan1,
           lighting: data.manualLed,
-          temperature: data.manualFan2, // Temperature uses manualFan2
-        });
+          temperature: data.manualFan2, // Assuming temperature uses manualFan2
+        }));
       })
       .catch((error) => {
-        console.error("Error fetching control states:", error);
+        console.error("Error fetching general control states:", error);
+      });
+
+    // Fetch irrigation control state
+    getControlStates2()
+      .then((response) => {
+        const data = response.data;
+        setControlStates((prevStates) => ({
+          ...prevStates,
+          irrigation: data.manualIrrigation,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching irrigation control state:", error);
       });
   }, []);
 
   const handleConfirm = (type: string, value: any) => {
-    const payload = {
-      manual: true,
-      manualFan1: type === "fan" ? value.enabled : controlStates.fan,
-      manualFan2:
-        type === "temperature" ? value.enabled : controlStates.temperature,
-      manualLed: type === "lighting" ? value.enabled : controlStates.lighting,
-    };
-    updateControlStates1(payload)
-      .then((response) => {
-        console.log(`Successfully updated ${type}:`, response.data);
-        setControlStates((prevStates) => ({
-          ...prevStates,
-          [type]: value.enabled,
-        }));
-      })
-      .catch((error) => {
-        console.error("Error updating control state:", error);
-      });
+    if (type === "irrigation") {
+      const payload = { manualIrrigation: value.enabled };
+      updateControlStates2(payload)
+        .then((response) => {
+          console.log(`Successfully updated ${type}:`, response.data);
+          setControlStates((prevStates) => ({
+            ...prevStates,
+            [type]: value.enabled,
+          }));
+        })
+        .catch((error) => {
+          console.error("Error updating irrigation control state:", error);
+        });
+    } else {
+      const payload = {
+        manual: true,
+        manualFan1: type === "fan" ? value.enabled : controlStates.fan,
+        manualFan2:
+          type === "temperature" ? value.enabled : controlStates.temperature,
+        manualLed: type === "lighting" ? value.enabled : controlStates.lighting,
+      };
+      updateControlStates1(payload)
+        .then((response) => {
+          console.log(`Successfully updated ${type}:`, response.data);
+          setControlStates((prevStates) => ({
+            ...prevStates,
+            [type]: value.enabled,
+          }));
+        })
+        .catch((error) => {
+          console.error("Error updating control state:", error);
+        });
+    }
   };
 
   return (
@@ -77,11 +112,11 @@ export function ManualControls() {
         />
         <ControlPanel
           title="Irrigation Control"
-          description="Monitor and manage water supply for irrigation. Keep your plants healthy and hydrated. (Coming Soon)"
+          description="Monitor and manage water supply for irrigation. Keep your plants healthy and hydrated."
           icon={<Droplet className="w-6 h-6" />}
           type="irrigation"
-          isEnabled={false} // Placeholder as per the requirement
-          onConfirm={() => {}}
+          isEnabled={controlStates.irrigation}
+          onConfirm={handleConfirm}
         />
       </div>
     </div>
