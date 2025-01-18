@@ -1,13 +1,14 @@
-import React from 'react';
-import { NavLink } from './NavLink';
-import { 
-  LayoutDashboard, 
-  LineChart, 
-  Sliders, 
-  Settings, 
+import React from "react";
+import { NavLink } from "./NavLink";
+import {
+  LayoutDashboard,
+  LineChart,
+  Sliders,
+  Settings,
   Info,
-  Leaf
-} from 'lucide-react';
+  Leaf,
+  User,
+} from "lucide-react";
 
 export function Sidebar() {
   return (
@@ -16,7 +17,7 @@ export function Sidebar() {
         <Leaf className="w-8 h-8" />
         <h1 className="text-xl font-bold">GreenControl</h1>
       </div>
-      
+
       <nav className="space-y-2">
         <NavLink to="/" icon={<LayoutDashboard className="w-5 h-5" />}>
           Dashboard
@@ -32,6 +33,9 @@ export function Sidebar() {
         </NavLink>
         <NavLink to="/about" icon={<Info className="w-5 h-5" />}>
           About
+        </NavLink>
+        <NavLink to="/users" icon={<User className="w-5 h-5" />}>
+          Users
         </NavLink>
       </nav>
     </div>

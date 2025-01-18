@@ -6,14 +6,15 @@ import { SensorData } from "./components/sensor-data/SensorData";
 import { ManualControls } from "./components/controls/ManualControls";
 import { Settings } from "./components/settings/Settings";
 import Login from "./components/Login";
-import Register from "./components/Register";
+import { Users } from "./components/users/Users";
+import AddUserForm from "./components/users/AddUserForm";
 
 export function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<AddUserForm />} />
         <Route
           path="/*"
           element={
@@ -25,6 +26,7 @@ export function App() {
                   <Route path="/sensor-data" element={<SensorData />} />
                   <Route path="/controls" element={<ManualControls />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/users" element={<Users />} />
                 </Routes>
               </div>
             </div>

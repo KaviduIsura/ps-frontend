@@ -21,7 +21,7 @@ export const saveSensorData = (data) => API.post("/sensor1", data);
 export const getSensorData2 = () => API.get("/sensor2");
 export const saveSensorData2 = (data) => API.post("/sensor2", data);
 
-// export const createUser = (userData) => API.post("/users", userData);
+export const createUser = (userData) => API.post("/users", userData);
 // export const userLogin = (credentials) => API.post("/user/login", credentials);
 
 export default API;

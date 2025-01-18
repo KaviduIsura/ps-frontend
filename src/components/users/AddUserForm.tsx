@@ -4,7 +4,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-export default function Register() {
+export default function AddUserForm() {
   const [imgUrl, setImgUrl] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -33,14 +33,14 @@ export default function Register() {
       address: address,
       profilePic: imgUrl,
     };
-    // const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     try {
-      await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/users", user, {
-        // headers: {
-        //   Authorization: "Bearer " + token,
-        // },
+      await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/user", user, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       });
-      navigate("/");
+      navigate("/users");
       toast.success("Product Add successfully");
     } catch (error) {
       toast.error("Failed to add product" + error);
