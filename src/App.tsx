@@ -8,6 +8,7 @@ import { Settings } from "./components/settings/Settings";
 import Login from "./components/Login";
 import { Users } from "./components/users/Users";
 import AddUserForm from "./components/users/AddUserForm";
+import { Diseases } from "./components/disease-detection/Disease";
 
 export function App() {
   return (
@@ -27,6 +28,7 @@ export function App() {
                   <Route path="/controls" element={<ManualControls />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/users" element={<Users />} />
+                  <Route path="/diseases" element={<Diseases />} />
                 </Routes>
               </div>
             </div>

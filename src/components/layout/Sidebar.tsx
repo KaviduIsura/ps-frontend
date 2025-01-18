@@ -37,6 +37,9 @@ export function Sidebar() {
         <NavLink to="/users" icon={<User className="w-5 h-5" />}>
           Users
         </NavLink>
+        <NavLink to="/diseases" icon={<User className="w-5 h-5" />}>
+          Detect Diseases
+        </NavLink>
       </nav>
     </div>
   );
