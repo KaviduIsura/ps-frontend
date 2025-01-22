@@ -19,7 +19,7 @@ export function Sidebar() {
       </div>
 
       <nav className="space-y-2">
-        <NavLink to="/" icon={<LayoutDashboard className="w-5 h-5" />}>
+        <NavLink to="/dashboard" icon={<LayoutDashboard className="w-5 h-5" />}>
           Dashboard
         </NavLink>
         <NavLink to="/sensor-data" icon={<LineChart className="w-5 h-5" />}>

@@ -5,81 +5,108 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export default function AddUserForm() {
-  const [imgUrl, setImgUrl] = useState("");
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    imgUrl: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    phoneNumber: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const navigate = useNavigate();
 
-  async function handleSubmit() {
-    // const promisesArray = [];
-    // for (let i = 0; i < imageFiles.length; i++) {
-    //   promisesArray[i] = uploadMediaToSupabase(imageFiles[i]);
-    // }
-    // const imgUrls = await Promise.all(promisesArray);
-    // console.log(imgUrls);
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    const user = {
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      password: password,
-      phoneNumber: phoneNumber,
-      address: address,
-      profilePic: imgUrl,
-    };
-    const token = localStorage.getItem("token");
-    try {
-      await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/user", user, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
-      navigate("/users");
-      toast.success("Product Add successfully");
-    } catch (error) {
-      toast.error("Failed to add product" + error);
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const {
+      imgUrl,
+      email,
+      firstName,
+      lastName,
+      address,
+      phoneNumber,
+      password,
+      confirmPassword,
+    } = formData;
+
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
     }
-  }
+
+    // Prepare user data
+    const user = {
+      imgUrl,
+      email,
+      firstName,
+      lastName,
+      address,
+      phoneNumber,
+      password,
+    };
+
+    // Get token from local storage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Authentication token is missing. Please log in.");
+      return;
+    }
+
+    try {
+      // Make API call
+      await axios.post("http://localhost:5003/api/user", user, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("User added successfully!");
+      navigate("/users");
+    } catch (error) {
+      console.error("Error adding user:", error.response || error.message);
+      toast.error(
+        `Failed to add user: ${error.response?.data?.message || error.message}`
+      );
+    }
+  };
 
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/background.jpg')" }}
     >
-      <div className="bg-green-800 p-8 rounded-lg shadow-lg w-full max-w-xl h-auto bg-opacity-80">
+      <div className="bg-green-800 p-8 rounded-lg shadow-lg w-full max-w-xl bg-opacity-80">
         <div className="flex justify-center mb-6">
           <Leaf className="w-12 h-12 text-green-400" />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center">
-          Create an Account for Users
+          Create an Account
         </h2>
-        <form>
-          {/* Profile Picture in Single Column */}
+        <form onSubmit={handleSubmit}>
+          {/* Profile Picture */}
           <div className="mb-4">
-            <label
-              htmlFor="profile-picture"
-              className="block text-sm font-medium mb-2"
-            >
-              Profile Picture
+            <label htmlFor="imgUrl" className="block text-sm font-medium mb-2">
+              Profile Picture URL
             </label>
             <input
               type="text"
-              id="profile-picture"
+              id="imgUrl"
+              name="imgUrl"
               className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-              value={imgUrl}
-              onChange={(e) => {
-                setImgUrl(e.target.value);
-              }}
+              value={formData.imgUrl}
+              onChange={handleChange}
             />
           </div>
 
-          {/* Email in Single Column */}
+          {/* Email */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium mb-2">
               Email
@@ -87,59 +114,53 @@ export default function AddUserForm() {
             <input
               type="email"
               id="email"
+              name="email"
               className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
               required
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
             />
           </div>
 
-          {/* First Name and Last Name in First Row (Two-Column Layout) */}
+          {/* First and Last Name */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label
-                htmlFor="first-name"
+                htmlFor="firstName"
                 className="block text-sm font-medium mb-2"
               >
                 First Name
               </label>
               <input
                 type="text"
-                id="first-name"
+                id="firstName"
+                name="firstName"
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="Enter your first name"
+                value={formData.firstName}
+                onChange={handleChange}
                 required
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value);
-                }}
               />
             </div>
             <div>
               <label
-                htmlFor="last-name"
+                htmlFor="lastName"
                 className="block text-sm font-medium mb-2"
               >
                 Last Name
               </label>
               <input
                 type="text"
-                id="last-name"
+                id="lastName"
+                name="lastName"
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="Enter your last name"
+                value={formData.lastName}
+                onChange={handleChange}
                 required
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value);
-                }}
               />
             </div>
           </div>
 
-          {/* Address and Phone Number in Next Row (Two-Column Layout) */}
+          {/* Address and Phone Number */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label
@@ -151,34 +172,33 @@ export default function AddUserForm() {
               <input
                 type="text"
                 id="address"
+                name="address"
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="Enter your address"
+                value={formData.address}
+                onChange={handleChange}
                 required
-                value={address}
-                onChange={(e) => {
-                  setAddress(e.target.value);
-                }}
               />
             </div>
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="phoneNumber"
+                className="block text-sm font-medium mb-2"
+              >
                 Phone Number
               </label>
               <input
                 type="tel"
-                id="phone"
+                id="phoneNumber"
+                name="phoneNumber"
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="Enter your phone number"
+                value={formData.phoneNumber}
+                onChange={handleChange}
                 required
-                value={phoneNumber}
-                onChange={(e) => {
-                  setphoneNumber(e.target.value);
-                }}
               />
             </div>
           </div>
 
-          {/* Password Fields in Two Columns */}
+          {/* Password and Confirm Password */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label
@@ -190,32 +210,28 @@ export default function AddUserForm() {
               <input
                 type="password"
                 id="password"
+                name="password"
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
                 required
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
               />
             </div>
             <div>
               <label
-                htmlFor="confirm-password"
+                htmlFor="confirmPassword"
                 className="block text-sm font-medium mb-2"
               >
                 Confirm Password
               </label>
               <input
                 type="password"
-                id="confirm-password"
+                id="confirmPassword"
+                name="confirmPassword"
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 required
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
               />
             </div>
           </div>
@@ -224,7 +240,6 @@ export default function AddUserForm() {
           <button
             type="submit"
             className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-3 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-            onClick={handleSubmit}
           >
             Register
           </button>
