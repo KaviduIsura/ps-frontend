@@ -6,9 +6,10 @@ import { SensorData } from "./components/sensor-data/SensorData";
 import { ManualControls } from "./components/controls/ManualControls";
 import { Settings } from "./components/settings/Settings";
 import Login from "./components/Login";
-import { Users } from "./components/users/Users";
+
 import AddUserForm from "./components/users/AddUserForm";
 import { Diseases } from "./components/disease-detection/Disease";
+import Users from "./components/users/Users";
 
 export function App() {
   return (
