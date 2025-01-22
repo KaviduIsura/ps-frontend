@@ -2,29 +2,45 @@ import axios from "axios";
 import { Leaf } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("Your email");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function login() {
+  const navigate = useNavigate();
+
+  function login(event) {
+    event.preventDefault(); // Prevent form submission
+
+    console.log("Login function called"); // Debugging statement
+    console.log("Email:", email); // Ensure email is correctly captured
+    console.log("Password:", password); // Ensure password is correctly captured
+
     axios
-      .post(import.meta.env.VITE_BACKEND_URL + "/api/users/login", {
+      .post("http://localhost:5003/api/user/login", {
         email: email,
         password: password,
       })
       .then((res) => {
-        if (res.data.user == null) {
-          toast.error(res.data.message);
+        console.log("Response received:", res.data); // Debug server response
+
+        // Check if user data exists in the response
+        if (!res.data.user) {
+          console.error("User data not found in response");
+          toast.error("Login failed: " + res.data.message);
           return;
         }
+
+        // Success: Store token and navigate
         toast.success(res.data.message);
         localStorage.setItem("token", res.data.token);
-        if ((res.data.user.type = "admin")) {
-          window.location.href = "/admin";
-        } else {
-          window.location.href = "/";
-        }
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        // Catch errors and log them
+        console.error("Error during login:", error);
+        toast.error("Login failed. Please check your credentials.");
       });
   }
 
@@ -40,7 +56,7 @@ export default function Login() {
         <h2 className="text-2xl font-bold mb-6 text-center">
           Login to Green Control
         </h2>
-        <form>
+        <form onSubmit={login}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium mb-2">
               Email
@@ -79,7 +95,6 @@ export default function Login() {
           <button
             type="submit"
             className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-3 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-            onClick={login}
           >
             Login
           </button>

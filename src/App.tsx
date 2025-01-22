@@ -14,8 +14,8 @@ export function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<AddUserForm />} />
+        <Route path="/" element={<Login />} />
+
         <Route
           path="/*"
           element={
@@ -23,7 +23,8 @@ export function App() {
               <Sidebar />
               <div className="ml-64">
                 <Routes>
-                  <Route path="/" element={<DashboardContent />} />
+                  <Route path="/dashboard" element={<DashboardContent />} />
+                  <Route path="/register" element={<AddUserForm />} />
                   <Route path="/sensor-data" element={<SensorData />} />
                   <Route path="/controls" element={<ManualControls />} />
                   <Route path="/settings" element={<Settings />} />
