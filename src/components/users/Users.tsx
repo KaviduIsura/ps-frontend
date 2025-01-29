@@ -2,19 +2,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaPencilAlt, FaTrash, FaPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Users() {
   const navigate = useNavigate();
-  const [users, setUsers] = useState<any[]>([]); // Using any[] as a placeholder type
+  const [users, setUsers] = useState([]); // Using specific array type if required
   const [usersLoaded, setUsersLoaded] = useState(false);
-  const [error, setError] = useState<string | null>(null); // For error messages
+  const [error, setError] = useState(null); // For error messages
 
   useEffect(() => {
     if (!usersLoaded) {
       axios
         .get("http://localhost:5003/api/user")
         .then((res) => {
-          // Handle successful response
           if (res.data && Array.isArray(res.data.list)) {
             setUsers(res.data.list);
           } else {
@@ -24,7 +24,6 @@ export default function Users() {
           setUsersLoaded(true);
         })
         .catch((err) => {
-          // Handle errors
           console.error("Error fetching users:", err);
           setError("Failed to load users.");
           setUsers([]); // Ensure users is always an array
@@ -32,6 +31,49 @@ export default function Users() {
         });
     }
   }, [usersLoaded]);
+
+  const handleDeleteUser = async (userId) => {
+    const token = localStorage.getItem("token");
+
+    if (!userId) {
+      console.error("User ID is undefined:", userId);
+      toast.error("User ID is undefined. Cannot delete user.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:5003/api/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+      toast.success("User deleted successfully");
+      setUsersLoaded(false); // Trigger a reload of the users
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(`Failed to delete user: ${error.response.data.message}`);
+      } else {
+        toast.error("An unexpected error occurred while deleting the user.");
+      }
+    }
+  };
+
+  const handleEditUser = (user) => {
+    navigate("/users/edit-user", {
+      state: { user: user },
+    });
+  };
 
   return (
     <div className="p-8 min-h-screen bg-gray-100 relative">
@@ -97,39 +139,22 @@ export default function Users() {
                     {user.phoneNumber}
                   </td>
                   <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
-                    {user.imgUrl}
+                    <img
+                      src={user.imgUrl || "https://via.placeholder.com/50"}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
                   </td>
                   <td className="border border-gray-300 px-4 py-3 flex gap-4 justify-center items-center">
                     <button
                       className="text-green-500 hover:text-green-700"
-                      // Uncomment for delete functionality when needed
-                      // onClick={() => {
-                      //   const token = localStorage.getItem("token");
-                      //   axios
-                      //     .delete(
-                      //       `http://localhost:5000/api/users/${user.userId}`,
-                      //       {
-                      //         headers: {
-                      //           Authorization: `Bearer ${token}`,
-                      //         },
-                      //       }
-                      //     )
-                      //     .then((res) => {
-                      //       console.log(res.data);
-                      //       toast.success("User deleted successfully");
-                      //       setUsersLoaded(false);
-                      //     });
-                      // }}
+                      onClick={() => handleDeleteUser(user._id)}
                     >
                       <FaTrash />
                     </button>
                     <button
                       className="text-green-800bg-green-800 hover:text-green-800bg-green-800"
-                      onClick={() => {
-                        navigate("/admin/users/edituser", {
-                          state: { user: user },
-                        });
-                      }}
+                      onClick={() => handleEditUser(user)}
                     >
                       <FaPencilAlt />
                     </button>

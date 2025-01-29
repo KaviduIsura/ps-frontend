@@ -1,12 +1,13 @@
 import axios from "axios";
 import { Leaf } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // @ts-ignore
 import uploadMediaToSupabase from "../../utils/mediaUpload";
 
-export default function AddUserForm() {
+export default function EditUserForm() {
+  const { userId } = useParams(); // Get user ID from URL params
   const [formData, setFormData] = useState({
     imageFiles: "",
     email: "",
@@ -20,10 +21,53 @@ export default function AddUserForm() {
 
   const navigate = useNavigate();
 
+  // Fetch user details for editing
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("Authentication token is missing. Please log in.");
+          return;
+        }
+
+        const response = await axios.get(
+          `http://localhost:5003/api/user/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        setFormData({
+          ...response.data,
+          imageFiles: "", // Placeholder for new image files
+          password: "", // Leave blank for security
+          confirmPassword: "", // Leave blank for security
+        });
+      } catch (error) {
+        console.error(
+          "Error fetching user details:",
+          error.response || error.message
+        );
+        toast.error(
+          `Failed to fetch user details: ${
+            error.response?.data?.message || error.message
+          }`
+        );
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId]);
+
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, files } = e.target;
+    if (name === "imageFiles") {
+      setFormData({ ...formData, imageFiles: files });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   // Handle form submission
@@ -31,14 +75,14 @@ export default function AddUserForm() {
     e.preventDefault();
 
     const promisesArray = [];
-    for (let i = 0; i < imageFiles.length; i++) {
-      promisesArray[i] = uploadMediaToSupabase(imageFiles[i]);
+    if (formData.imageFiles) {
+      for (let i = 0; i < formData.imageFiles.length; i++) {
+        promisesArray[i] = uploadMediaToSupabase(formData.imageFiles[i]);
+      }
     }
     const imgUrls = await Promise.all(promisesArray);
-    console.log(imgUrls);
 
     const {
-      profilePic,
       email,
       firstName,
       lastName,
@@ -49,23 +93,22 @@ export default function AddUserForm() {
     } = formData;
 
     // Validate passwords match
-    if (password !== confirmPassword) {
+    if (password && password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
 
-    // Prepare user data
-    const user = {
+    // Prepare updated user data
+    const updatedUser = {
       imgUrls,
       email,
       firstName,
       lastName,
       address,
       phoneNumber,
-      password,
+      ...(password && { password }), // Include password if changed
     };
 
-    // Get token from local storage
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Authentication token is missing. Please log in.");
@@ -74,15 +117,17 @@ export default function AddUserForm() {
 
     try {
       // Make API call
-      await axios.post("http://localhost:5003/api/user", user, {
+      await axios.put(`http://localhost:5003/api/user/${userId}`, updatedUser, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("User added successfully!");
+      toast.success("User updated successfully!");
       navigate("/users");
     } catch (error) {
-      console.error("Error adding user:", error.response || error.message);
+      console.error("Error updating user:", error.response || error.message);
       toast.error(
-        `Failed to add user: ${error.response?.data?.message || error.message}`
+        `Failed to update user: ${
+          error.response?.data?.message || error.message
+        }`
       );
     }
   };
@@ -97,21 +142,24 @@ export default function AddUserForm() {
           <Leaf className="w-12 h-12 text-green-400" />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center">
-          Create an Account
+          Edit User Details
         </h2>
         <form onSubmit={handleSubmit}>
           {/* Profile Picture */}
           <div className="mb-4">
-            <label htmlFor="imgUrl" className="block text-sm font-medium mb-2">
-              Profile Picture URL
+            <label
+              htmlFor="imageFiles"
+              className="block text-sm font-medium mb-2"
+            >
+              Profile Picture
             </label>
             <input
               type="file"
               id="imageFiles"
               name="imageFiles"
               className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-              onChange={handleChange} // Correctly handle file input
-              multiple // Allow multiple file selection if needed
+              onChange={handleChange}
+              multiple
             />
           </div>
 
@@ -223,7 +271,6 @@ export default function AddUserForm() {
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
                 value={formData.password}
                 onChange={handleChange}
-                required
               />
             </div>
             <div>
@@ -240,7 +287,6 @@ export default function AddUserForm() {
                 className="w-full p-3 rounded bg-green-700 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -250,7 +296,7 @@ export default function AddUserForm() {
             type="submit"
             className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-3 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
           >
-            Register
+            Save Changes
           </button>
         </form>
       </div>

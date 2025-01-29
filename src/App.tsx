@@ -8,8 +8,11 @@ import { Settings } from "./components/settings/Settings";
 import Login from "./components/Login";
 
 import AddUserForm from "./components/users/AddUserForm";
-import { Diseases } from "./components/disease-detection/Disease";
+
 import Users from "./components/users/Users";
+import EditUserForm from "./components/users/ediUser";
+import AboutPage from "./components/about";
+import DiseaseDetection from "./components/disease-detection/Disease";
 
 export function App() {
   return (
@@ -30,7 +33,9 @@ export function App() {
                   <Route path="/controls" element={<ManualControls />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/users" element={<Users />} />
-                  <Route path="/diseases" element={<Diseases />} />
+                  <Route path="/users/edit-user" element={<EditUserForm />} />
+                  <Route path="/diseases" element={<DiseaseDetection />} />
+                  <Route path="/about" element={<AboutPage />} />
                 </Routes>
               </div>
             </div>
