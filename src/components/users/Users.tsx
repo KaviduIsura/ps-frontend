@@ -79,7 +79,7 @@ export default function Users() {
     <div className="p-8 min-h-screen bg-gray-100 relative">
       <Link
         to={"/register"}
-        className="absolute right-[25px] bottom-[25px] text-[25px] bg-white p-4 rounded-full text-green-800bg-green-800 border-green-800bg-green-800 border-2 hover:bg-blue-100 shadow-lg"
+        className="absolute right-[25px] bottom-[25px] text-[25px] bg-white p-4 rounded-full text-green-600 border-green-600 border-2 hover:bg-blue-100 shadow-lg"
       >
         <FaPlus />
       </Link>
@@ -166,7 +166,7 @@ export default function Users() {
         </div>
       ) : (
         <div className="w-full h-full flex justify-center items-center">
-          <div className="w-[60px] h-[60px] border-[4px] border-gray-400 border-b-blue-700 animate-spin rounded-full "></div>
+          <div className="w-[60px] h-[60px] border-[4px] border-gray-400 border-b-green-700 animate-spin rounded-full "></div>
         </div>
       )}
     </div>
