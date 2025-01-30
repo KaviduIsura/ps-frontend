@@ -53,6 +53,8 @@ export function SensorData() {
     timestamp: entry.timestamp,
     value: entry.lightIntensity,
   }));
+
+  console.log(sensorData)
   
   return (
     <div className="p-6">
@@ -81,6 +83,13 @@ export function SensorData() {
             data={lightData}
             unit=" lux"
             color="#f59e0b"
+            onDownload={() => handleDownload('light', lightData)}
+          />
+          <SensorChart
+            title="Soil Moisture"
+            data={temperatureData}
+            unit=" %"
+            color="green"
             onDownload={() => handleDownload('light', lightData)}
           />
         </div>
