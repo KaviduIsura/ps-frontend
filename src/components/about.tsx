@@ -1,149 +1,97 @@
 import React from "react";
 import { Link } from "react-scroll";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
 
 const AboutPage: React.FC = () => {
   return (
-    <div className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+    <div className="bg-green-50 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Title Section */}
-        <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-8 transition-transform transform hover:scale-105">
-          About Our Greenhouse Automation System
-        </h1>
-
-        <p className="text-lg text-gray-700 mb-12 text-center transition-opacity opacity-75 hover:opacity-100">
-          Welcome to the{" "}
-          <span className="font-semibold text-green-600">
-            Greenhouse Automation Project
-          </span>
-          , a cutting-edge initiative designed to revolutionize sustainable
-          agriculture through technology. Our mission is to make greenhouse
-          management smarter, more efficient, and environmentally friendly by
-          leveraging the power of the Internet of Things (IoT) and advanced
-          automation.
-        </p>
-
-        {/* What We Do Section */}
-        <section
-          id="what-we-do"
-          className="grid grid-cols-1 md:grid-cols-2 gap-12 transition-all duration-500 ease-in-out"
+        <motion.h1
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="text-4xl font-extrabold text-center text-green-800 mb-8 transition-transform transform hover:scale-105"
         >
-          <div className="space-y-4 animate__animated animate__fadeIn animate__delay-1s">
-            <h2 className="text-2xl font-semibold text-gray-900">What We Do</h2>
-            <p className="text-lg text-gray-700">
-              Our system monitors and controls key environmental factors within
-              the greenhouse, such as temperature, humidity, lighting, and soil
-              moisture. Using real-time sensor data, we ensure optimal growing
-              conditions for your plants while minimizing resource wastage.
-              Whether it’s regulating fans, LED strips, or irrigation systems,
-              our solution empowers you to automate tasks and focus on what
-              matters most—your crops.
+          Greenhouse Automation System
+        </motion.h1>
+
+        <motion.p
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="text-lg text-green-700 mb-12 text-center opacity-75 hover:opacity-100"
+        >
+          Our Greenhouse Automation System integrates advanced technologies to
+          optimize farming conditions, ensuring sustainability and efficiency.
+        </motion.p>
+
+        <section id="what-we-do" className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="space-y-4">
+            <h2 className="text-2xl font-semibold text-green-800">What We Do</h2>
+            <p className="text-lg text-green-700">
+              We leverage sensors, IoT, and AI-driven automation to control temperature,
+              humidity, irrigation, and lighting—ensuring optimal plant growth while
+              conserving resources.
             </p>
-          </div>
+          </motion.div>
 
-          {/* Key Features Section */}
-          <div className="space-y-4 animate__animated animate__fadeIn animate__delay-2s">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              Key Features
-            </h2>
-            <ul className="list-inside list-disc space-y-2 text-lg text-gray-700">
-              <li>
-                <strong>Real-Time Monitoring:</strong> View live data from
-                sensors directly on this platform, giving you insights into the
-                health of your greenhouse.
-              </li>
-              <li>
-                <strong>Remote Control:</strong> Adjust lighting, irrigation,
-                and temperature settings from the comfort of your home or on the
-                go.
-              </li>
-              <li>
-                <strong>Data Visualization:</strong> Analyze historical trends
-                with interactive charts and graphs, enabling better
-                decision-making for plant growth.
-              </li>
-              <li>
-                <strong>Seamless Integration:</strong> The system is powered by
-                NodeMCU microcontrollers and ESP8266, ensuring efficient
-                communication between components.
-              </li>
-              <li>
-                <strong>User-Friendly Interface:</strong> Built with the MERN
-                stack, the platform offers a responsive and intuitive user
-                experience.
-              </li>
+          <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="space-y-4">
+            <h2 className="text-2xl font-semibold text-green-800">Key Features</h2>
+            <ul className="list-inside list-disc space-y-2 text-lg text-green-700">
+              <li><strong>Automated Irrigation:</strong> Smart water management system.</li>
+              <li><strong>Climate Control:</strong> Adjusts temperature & humidity dynamically.</li>
+              <li><strong>Energy Efficiency:</strong> Reduces power consumption with AI optimizations.</li>
+              <li><strong>Remote Access:</strong> Monitor & control via web & mobile apps.</li>
+              <li><strong>AI Insights:</strong> Predicts environmental changes for proactive adjustments.</li>
             </ul>
-          </div>
+          </motion.div>
         </section>
 
-        {/* Our Vision Section */}
-        <section
-          id="our-vision"
-          className="mt-16 text-center animate__animated animate__fadeIn animate__delay-3s"
-        >
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Our Vision
-          </h2>
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-            We believe in creating sustainable solutions to meet the growing
-            demand for efficient agriculture. By integrating IoT and automation,
-            our system empowers farmers and greenhouse owners to produce
-            healthier crops with fewer resources.
+        <motion.section initial="hidden" animate="visible" variants={fadeInUp} id="our-vision" className="mt-16 text-center">
+          <h2 className="text-2xl font-semibold text-green-800 mb-4">Our Vision</h2>
+          <p className="text-lg text-green-700 max-w-3xl mx-auto">
+            We aim to revolutionize agriculture by integrating cutting-edge automation,
+            reducing resource waste, and increasing yields through sustainable farming practices.
           </p>
-        </section>
+        </motion.section>
 
-        {/* Why Choose Us Section */}
-        <section
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
           id="why-choose-us"
-          className="mt-16 bg-blue-100 p-8 rounded-lg shadow-md transition-all duration-500 ease-in-out hover:shadow-xl"
+          className="mt-16 bg-green-100 p-8 rounded-lg shadow-md hover:shadow-xl"
         >
-          <h2 className="text-2xl font-semibold text-gray-900 text-center">
-            Why Choose Us?
-          </h2>
+          <h2 className="text-2xl font-semibold text-green-800 text-center">Why Choose Us?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-            <div className="flex items-center space-x-4 hover:bg-green-200 p-4 rounded-lg transition-colors duration-300">
-              <span className="text-4xl text-green-600">💡</span>
-              <div>
-                <h3 className="font-semibold text-lg text-gray-900">
-                  Innovation-Driven
-                </h3>
-                <p className="text-gray-700">
-                  Combining advanced hardware and software for smarter farming.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4 hover:bg-green-200 p-4 rounded-lg transition-colors duration-300">
-              <span className="text-4xl text-green-600">🌍</span>
-              <div>
-                <h3 className="font-semibold text-lg text-gray-900">
-                  Environmentally Conscious
-                </h3>
-                <p className="text-gray-700">
-                  Reducing water and energy usage through precise control
-                  systems.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4 hover:bg-green-200 p-4 rounded-lg transition-colors duration-300">
-              <span className="text-4xl text-green-600">🚀</span>
-              <div>
-                <h3 className="font-semibold text-lg text-gray-900">
-                  Future-Ready
-                </h3>
-                <p className="text-gray-700">
-                  Scalable features to meet the evolving needs of modern
-                  agriculture.
-                </p>
-              </div>
-            </div>
+            {[
+              { icon: "💡", title: "Innovation-Driven", text: "Utilizing AI & IoT for efficiency." },
+              { icon: "🌍", title: "Eco-Friendly", text: "Optimized water & energy consumption." },
+              { icon: "🚀", title: "Scalable Solutions", text: "Designed for farms of all sizes." }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-sm hover:bg-green-200 transition-colors duration-300"
+              >
+                <span className="text-4xl text-green-600">{item.icon}</span>
+                <div>
+                  <h3 className="font-semibold text-lg text-green-800">{item.title}</h3>
+                  <p className="text-green-700">{item.text}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </motion.section>
 
-        {/* Thank You Section */}
-        <section className="mt-16 text-center animate__animated animate__fadeIn animate__delay-4s">
-          <p className="text-lg text-gray-700">
-            Thank you for being part of our journey toward a greener, smarter
-            future. Explore our platform and experience the difference
-            technology can make in agriculture!
+        <motion.section initial="hidden" animate="visible" variants={fadeInUp} className="mt-16 text-center">
+          <p className="text-lg text-green-700">
+            Join us in building a smarter, more efficient future for agriculture.
           </p>
           <Link
             to="what-we-do"
@@ -153,7 +101,7 @@ const AboutPage: React.FC = () => {
           >
             Learn More
           </Link>
-        </section>
+        </motion.section>
       </div>
     </div>
   );
