@@ -127,11 +127,15 @@ export function DashboardContent() {
           title="Light Intensity"
           value={lightIntensity !== null ? `${lightIntensity} %` : "Loading..."}
           icon={<Sun className="w-6 h-6" />}
+          trend="up"
+          trendValue="4% from yesterday"
         />
         <StatCard
           title="Soil Moisture"
           value={soilMoisture !== null ? `${soilMoisture} %` : "Loading..."}
           icon={<Wind className="w-6 h-6" />}
+          trend="down"
+          trendValue="13% from yesterday"
         />
       </div>
 

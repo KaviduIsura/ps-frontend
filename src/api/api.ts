@@ -12,7 +12,7 @@ export const resetControlStates1 = (data: any) =>
   API.post("/control/reset", data);
 
 export const getControlStates2 = () => API.get("/control2");
-export const updateControlStates2 = (data) => API.post("/control2", data);
+export const updateControlStates2 = (data: any) => API.post("/control2", data);
 
 export const getSensorData = () => API.get("/sensor1");
 export const getLatestSensorData = () => API.get("/sensor1/latest");

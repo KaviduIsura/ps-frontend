@@ -4,11 +4,11 @@ import { ConfirmDialog } from "./ConfirmDialog";
 
 interface ControlPanelProps {
   title: string;
-  description: string; // Add this line
+  description: string;
   icon: React.ReactNode;
   type: string;
   isEnabled: boolean;
-  onConfirm: (type: string, value: any) => void;
+  onConfirm: (type: string, value: { enabled: boolean }) => void;
 }
 
 export function ControlPanel({
@@ -20,23 +20,31 @@ export function ControlPanel({
   onConfirm,
 }: ControlPanelProps) {
   const [localEnabled, setLocalEnabled] = useState(isEnabled);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState<{
+    enabled: boolean;
+  } | null>(null);
 
+  // Sync local state with parent state
   useEffect(() => {
     setLocalEnabled(isEnabled);
   }, [isEnabled]);
 
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [pendingChanges, setPendingChanges] = useState<any>(null);
-
   const handleChange = (checked: boolean) => {
-    const changes = { enabled: checked };
-    setPendingChanges(changes);
+    setPendingChanges({ enabled: checked });
     setShowConfirm(true);
   };
 
   const handleConfirm = () => {
-    onConfirm(type, pendingChanges);
-    setLocalEnabled(pendingChanges.enabled);
+    if (pendingChanges) {
+      onConfirm(type, pendingChanges);
+      setLocalEnabled(pendingChanges.enabled);
+    }
+    setShowConfirm(false);
+  };
+
+  const handleCancel = () => {
+    setPendingChanges(null);
     setShowConfirm(false);
   };
 
@@ -47,7 +55,6 @@ export function ControlPanel({
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
 
-      {/* Description rendering */}
       <p className="text-gray-500 text-sm mb-4">{description}</p>
 
       <div className="flex items-center justify-between">
@@ -57,7 +64,7 @@ export function ControlPanel({
 
       <ConfirmDialog
         isOpen={showConfirm}
-        onClose={() => setShowConfirm(false)}
+        onClose={handleCancel}
         onConfirm={handleConfirm}
         changes={pendingChanges}
         type={type}
