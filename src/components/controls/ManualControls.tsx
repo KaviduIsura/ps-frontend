@@ -18,67 +18,65 @@ export function ManualControls() {
 
   useEffect(() => {
     // Fetch general control states
-    getControlStates1()
-      .then((response) => {
-        const data = response.data;
-        setControlStates((prevStates) => ({
-          ...prevStates,
-          fan: data.manualFan1,
-          lighting: data.manualLed,
-          temperature: data.manualFan2, // Assuming temperature uses manualFan2
-        }));
-      })
-      .catch((error) => {
-        console.error("Error fetching general control states:", error);
-      });
+    const fetchControlStates = async () => {
+      try {
+        const response1 = await getControlStates1();
+        const response2 = await getControlStates2();
 
-    // Fetch irrigation control state
-    getControlStates2()
-      .then((response) => {
-        const data = response.data;
-        setControlStates((prevStates) => ({
-          ...prevStates,
-          irrigation: data.manualIrrigation,
-        }));
-      })
-      .catch((error) => {
-        console.error("Error fetching irrigation control state:", error);
-      });
+        const data1 = response1.data;
+        const data2 = response2.data;
+
+        setControlStates({
+          fan: data1.manualFan1,
+          lighting: data1.manualLed,
+          temperature: data1.manualFan2,
+          irrigation: data2.manualIrrigation,
+        });
+      } catch (error) {
+        console.error("Error fetching control states:", error);
+      }
+    };
+
+    fetchControlStates();
   }, []);
 
-  const handleConfirm = (type: string, value: any) => {
-    if (type === "irrigation") {
-      const payload = { manualIrrigation: value.enabled };
-      updateControlStates2(payload)
-        .then((response) => {
-          console.log(`Successfully updated ${type}:`, response.data);
-          setControlStates((prevStates) => ({
-            ...prevStates,
-            [type]: value.enabled,
-          }));
-        })
-        .catch((error) => {
-          console.error("Error updating irrigation control state:", error);
-        });
-    } else {
-      const payload = {
-        manual: true,
-        manualFan1: type === "fan" ? value.enabled : controlStates.fan,
-        manualFan2:
-          type === "temperature" ? value.enabled : controlStates.temperature,
-        manualLed: type === "lighting" ? value.enabled : controlStates.lighting,
-      };
-      updateControlStates1(payload)
-        .then((response) => {
-          console.log(`Successfully updated ${type}:`, response.data);
-          setControlStates((prevStates) => ({
-            ...prevStates,
-            [type]: value.enabled,
-          }));
-        })
-        .catch((error) => {
-          console.error("Error updating control state:", error);
-        });
+  const handleConfirm = async (type, value) => {
+    try {
+      if (type === "irrigation") {
+        const payload = {
+          manualValve: value.enabled,
+          valve: value.enabled, // Optional: Sync valve state if required
+        };
+
+        const response = await updateControlStates2(payload);
+        console.log(`Successfully updated ${type}:`, response.data);
+
+        // Update the state with the backend response
+        setControlStates((prevStates) => ({
+          ...prevStates,
+          irrigation: response.data.newControl.manualValve,
+        }));
+      } else {
+        const payload = {
+          manual: true,
+          manualFan1: type === "fan" ? value.enabled : controlStates.fan,
+          manualFan2:
+            type === "temperature" ? value.enabled : controlStates.temperature,
+          manualLed:
+            type === "lighting" ? value.enabled : controlStates.lighting,
+        };
+
+        const response = await updateControlStates1(payload);
+        console.log(`Successfully updated ${type}:`, response.data);
+
+        // Update the state with the backend response
+        setControlStates((prevStates) => ({
+          ...prevStates,
+          [type]: value.enabled,
+        }));
+      }
+    } catch (error) {
+      console.error(`Error updating ${type} control state:`, error);
     }
   };
 
